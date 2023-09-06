@@ -91,17 +91,17 @@ class denseNet(nn.Module):
     self.layers = nn.Sequential(*layer)
 
     if num_classes == 2:
-        self.fully_connected = nn.Linear(1024, 1)
-        self.act = nn.Sigmoid()
+        self.fc = nn.Linear(1024, 1)
+        self.activation = nn.Sigmoid()
     else:
-        self.fully_connected = nn.Linear(1024, num_classes)
-        self.act = nn.Softmax(dim=1)
+        self.fc = nn.Linear(1024, num_classes)
+        self.activation = nn.Softmax(dim=1)
 
   def forward(self, x):
     out = self.layers(x)
     out = F.relu(out, inplace=True)
     out = F.adaptive_avg_pool2d(out, (1, 1))
     out = torch.flatten(out, 1)
-    out = self.act(self.fully_connected(out))
+    out = self.activation(self.fc(out))
 
     return out
